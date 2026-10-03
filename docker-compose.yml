@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # MySQL Relational Database
+  mysql:
+    image: mysql:8.0
+    container_name: voltcart_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: voltcart_db
+      MYSQL_USER: voltcart_user
+      MYSQL_PASSWORD: voltcart_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+  # Python Flask REST API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: voltcart_backend
+    restart: always
+    environment:
+      DATABASE_URL: mysql://voltcart_user:voltcart_password@mysql:3306/voltcart_db
+      SECRET_KEY: voltcart-production-secret-key-2026
+      JWT_SECRET: voltcart-jwt-secure-token-2026
+      RAZORPAY_KEY_ID: rzp_test_sampleKey123
+      RAZORPAY_KEY_SECRET: sampleRazorpaySecretKey456
+      PORT: 5000
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysql
+
+  # React Frontend (Vite)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: voltcart_frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:

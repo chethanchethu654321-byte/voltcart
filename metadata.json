@@ -1,0 +1,6 @@
+{
+  "name": "VoltCart - Electrical & Plumbing Store",
+  "description": "High-performance mobile-first e-commerce web application for electrical and plumbing supplies with real-time tracking, COD & online payments, inventory management, and delivery logistics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
